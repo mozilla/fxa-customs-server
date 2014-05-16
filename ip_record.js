@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-module.exports = function (BLOCK_INTERVAL_MS, INVALID_AGENT_INTERVAL_MS, now) {
+module.exports = function (BLOCK_INTERVAL_MS, INVALID_AGENT_INTERVAL_MS, badAgents, now) {
 
   now = now || Date.now
 
@@ -17,7 +17,12 @@ module.exports = function (BLOCK_INTERVAL_MS, INVALID_AGENT_INTERVAL_MS, now) {
   }
 
   function isBadAgent(agent) {
-    return false // TODO
+    for (var i=0, len=badAgents.length; i < len; i++) {
+      if (agent.indexOf(badAgents[i]) === 0) {
+        return true
+      }
+    }
+    return false
   }
 
   IpRecord.prototype.isBlocked = function () {
