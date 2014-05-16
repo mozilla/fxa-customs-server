@@ -10,7 +10,7 @@ function now() {
 }
 
 function simpleIpRecord() {
-  return new (ipRecord(120*1000, 60*1000, now))()
+  return new (ipRecord(120*1000, 60*1000, ['BadAgent'], now))()
 }
 
 test(
@@ -62,12 +62,12 @@ test(
   function (t) {
     var ir = simpleIpRecord()
     t.equal(ir.isBlocked(), false, 'original object is not blocked')
-    var irCopy1 = (ipRecord(120*1000, 60*1000, now)).parse(ir)
+    var irCopy1 = (ipRecord(120*1000, 60*1000, [], now)).parse(ir)
     t.equal(irCopy1.isBlocked(), false, 'copied object is not blocked')
 
     ir.block()
     t.equal(ir.isBlocked(), true, 'original object is now blocked')
-    var irCopy2 = (ipRecord(120*1000, 60*1000, now)).parse(ir)
+    var irCopy2 = (ipRecord(120*1000, 60*1000, [], now)).parse(ir)
     t.equal(irCopy2.isBlocked(), true, 'copied object is blocked')
     t.end()
   }
@@ -77,7 +77,14 @@ test(
   'update works',
   function (t) {
     var ir = simpleIpRecord()
-    t.equal(ir.update('bogusAgent'), 0, 'bogus agent does nothing')
+    t.equal(ir.update('LegitAgent'), 0, 'legit agent works')
+    t.equal(ir.isBlocked(), false, 'not blocked')
+    t.equal(ir.update('BadAgent 1.0 (Netscape Mosaic 1.0 compatible; OS/2; s390; ftw) Lynx/30.1 Chromium/0.5 OtherJunk/5.5'), 0, 'bad agent works the first time')
+    t.equal(ir.isBlocked(), false, 'not blocked')
+    t.equal(ir.update('LegitAgent'), 0, 'legit agent still works')
+    t.equal(ir.isBlocked(), false, 'not blocked')
+    t.equal(ir.update('BadAgent 1.0 (Netscape Mosaic 1.0 compatible; OS/2; s390; ftw) Lynx/30.1 Chromium/0.5 OtherJunk/5.5'), 120, 'bad agent rejected the second time')
+    t.equal(ir.isBlocked(), true, 'blocked')
     t.end()
   }
 )

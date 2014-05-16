@@ -12,6 +12,7 @@ module.exports = require('rc')(
     blockIntervalSeconds: 60 * 15,
     invalidAgentIntervalSeconds: 60,
     maxEmails: 3,
-    maxBadLogins: 2
+    maxBadLogins: 2,
+    badAgents: []
   }
 )
