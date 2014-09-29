@@ -51,6 +51,22 @@ test(
         t.equal(res.statusCode, 500, 'bad request returns a 500')
         t.type(obj.code, 'string', 'bad request returns an error code')
         t.type(obj.message, 'string', 'bad request returns an error message')
+        t.equal(obj.message, 'email and ip are both required', 'correct error message if missing params')
+        t.end()
+      }
+    )
+  }
+)
+
+test(
+  'missing email',
+  function (t) {
+    client.post('/failedLoginAttempt', { email: TEST_EMAIL },
+      function (err, req, res, obj) {
+        t.equal(res.statusCode, 500, 'bad request returns a 500')
+        t.type(obj.code, 'string', 'bad request returns an error code')
+        t.type(obj.message, 'string', 'bad request returns an error message')
+        t.equal(obj.message, 'email and ip are both required', 'correct error message if missing params')
         t.end()
       }
     )
@@ -65,6 +81,7 @@ test(
         t.equal(res.statusCode, 500, 'bad request returns a 500')
         t.type(obj.code, 'string', 'bad request returns an error code')
         t.type(obj.message, 'string', 'bad request returns an error message')
+        t.equal(obj.message, 'email and ip are both required', 'correct error message if missing params')
         t.end()
       }
     )
