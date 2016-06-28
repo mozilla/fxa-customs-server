@@ -22,6 +22,9 @@ var config = {
     ipRateLimitBanDurationSeconds: Number(process.env.IP_RATE_LIMIT_BAN_DURATION_SECONDS) || 60 * 15,
     badLoginLockout: 3,
     badLoginLockoutIntervalSeconds: 20
+  },
+  requestChecks: {
+    flowIdRequiredOnLogin: false
   }
 }
 
@@ -45,6 +48,7 @@ var TEST_IP = '192.0.2.1'
 var limits = require('../lib/limits')(config, mc, console)
 var allowedIPs = require('../lib/allowed_ips')(config, mc, console)
 var allowedEmailDomains = require('../lib/allowed_email_domains')(config, mc, console)
+var requestChecks = require('../lib/requestChecks')(config, mc, console)
 var EmailRecord = require('../lib/email_record')(limits)
 var IpEmailRecord = require('../lib/ip_email_record')(limits)
 var IpRecord = require('../lib/ip_record')(limits)
@@ -109,6 +113,7 @@ function clearEverything(cb) {
     mc.delAsync('limits'),
     mc.delAsync('allowedIPs'),
     mc.delAsync('allowedEmailDomains'),
+    mc.delAsync('requestChecks'),
     mc.delAsync(TEST_EMAIL),
     mc.delAsync(TEST_IP + TEST_EMAIL),
     mc.delAsync(TEST_IP)
@@ -154,6 +159,23 @@ function setAllowedEmailDomains(domains) {
     .then(function (domains) {
       mc.end()
       return domains
+    })
+}
+
+module.exports.setAllowedEmailDomains = setAllowedEmailDomains
+
+module.exports.setRequestChecks = setRequestChecks
+
+function setRequestChecks(settings) {
+  var keys = Object.keys(settings)
+  for (var i = 0; i < keys.length; i++) {
+    var k = keys[i]
+    requestChecks[k] = settings[k]
+  }
+  return requestChecks.push().
+    then(function (s) {
+      mc.end()
+      return s
     })
 }
 
