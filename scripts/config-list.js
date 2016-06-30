@@ -38,7 +38,9 @@ var mc = new Memcached(process.argv[2], { namespace: 'fxa~' })
 
 var output = {
   limits: {},
-  allowedIPs: []
+  allowedIPs: [],
+  allowedEmailDomains: [],
+  requestChecks: {}
 }
 
 mc.getAsync('limits')
@@ -56,6 +58,24 @@ mc.getAsync('limits')
       if (!data) { console.error('no allowedIPs set') }
       else {
         output.allowedIPs = data
+      }
+      return mc.getAsync('allowedEmailDomains')
+    }
+  )
+  .then(
+    function (data) {
+      if (!data) { console.error('no allowedEmailDomains set') }
+      else {
+        output.allowedEmailDomains = data
+      }
+      return mc.getAsync('requestChecks')
+    }
+  )
+  .then(
+    function (data) {
+      if (!data) { console.error('no requestChecks set') }
+      else {
+        output.requestChecks = data
       }
     }
   )

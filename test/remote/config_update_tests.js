@@ -21,6 +21,9 @@ var client = restify.createJsonClient({
   url: 'http://127.0.0.1:' + config.listen.port
 })
 
+var IP = '10.0.0.5'
+var EMAIL = 'test@example.com'
+
 Promise.promisifyAll(client, { multiArgs: true })
 
 test(
@@ -123,6 +126,47 @@ test(
       })
       .spread(function (req, res, obj) {
         t.deepEqual(x, obj, 'server sees the change')
+        t.end()
+      })
+      .catch(function (err) {
+        t.fail(err)
+        t.end()
+      })
+  }
+)
+
+test(
+  'change requestChecks',
+  function (t) {
+    return client.postAsync('/check', {
+        ip: IP,
+        email: EMAIL,
+        action: 'accountLogin'
+      })
+      .spread(function (req, res, obj) {
+        t.deepEqual(obj, {
+          block: false,
+          retryAfter: 0
+        }, 'request was not blocked')
+        return mcHelper.setRequestChecks({
+          flowIdRequiredOnLogin: true
+        })
+      })
+      .then(function (ips) {
+        return Promise.delay(1010)
+      })
+      .then(function() {
+        return client.postAsync('/check', {
+          ip: IP,
+          email: EMAIL,
+          action: 'accountLogin'
+        })
+      })
+      .spread(function (req, res, obj) {
+        t.deepEqual(obj, {
+          block: true,
+          retryAfter: 0
+        }, 'request was blocked after the change')
         t.end()
       })
       .catch(function (err) {
