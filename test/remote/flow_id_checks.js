@@ -208,6 +208,54 @@ test(
 )
 
 test(
+  'request with reason=signin is blocked',
+  function (t) {
+    client.post('/check',
+      {
+        ip: TEST_IP,
+        email: TEST_EMAIL,
+        action: 'accountLogin',
+        payload: {
+          reason: 'signin',
+          metricsContext: {
+              utm_campaign: 'test-campaign'
+          }
+        }
+      },
+      function (err, req, res, obj) {
+        t.equal(res.statusCode, 200, 'check worked')
+        t.equal(obj.block, true, 'request was blocked')
+        t.end()
+      }
+    )
+  }
+)
+
+test(
+  'request with reason=password_change is not blocked',
+  function (t) {
+    client.post('/check',
+      {
+        ip: TEST_IP,
+        email: TEST_EMAIL,
+        action: 'accountLogin',
+        payload: {
+          reason: 'password_change',
+          metricsContext: {
+              utm_campaign: 'test-campaign'
+          }
+        }
+      },
+      function (err, req, res, obj) {
+        t.equal(res.statusCode, 200, 'check worked')
+        t.equal(obj.block, false, 'request was not blocked')
+        t.end()
+      }
+    )
+  }
+)
+
+test(
   'teardown',
   function (t) {
     testServer.stop()
