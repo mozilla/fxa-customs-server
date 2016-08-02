@@ -39,28 +39,28 @@ test(
 )
 
 test(
-  'returns false for empty ip',
+  'returns true for empty ip',
   function (t) {
     var ipBlocklist = new IPBlocklist()
 
     ipBlocklist.load(filePath)
       .then(function () {
         var result = ipBlocklist.contains()
-        t.equal(result, false, 'return false for empty ip')
+        t.equal(result, true, 'return true for empty ip')
         t.end()
       })
   }
 )
 
 test(
-  'returns false for invalid ip',
+  'returns true for invalid ip',
   function (t) {
     var ipBlocklist = new IPBlocklist()
 
     ipBlocklist.load(filePath)
       .then(function () {
         var result = ipBlocklist.contains('notip')
-        t.equal(result, false, 'return false for invalid ip')
+        t.equal(result, true, 'return true for invalid ip')
         t.end()
       })
   }

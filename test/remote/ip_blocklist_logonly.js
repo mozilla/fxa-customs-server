@@ -10,11 +10,9 @@ var mcHelper = require('../memcache-helper')
 var TEST_EMAIL = 'test@example.com'
 var ACTION = 'dummyAction'
 var BLOCK_IP = '1.93.0.224'
-var BLOCK_IP_INRANGE = '0.1.0.0'
-var VALID_IP = '3.0.0.0'
 
 process.env.IP_BLOCKLIST_ENABLE = true
-process.env.IP_BLOCKLIST_LOGONLY = false
+process.env.IP_BLOCKLIST_LOGONLY = true
 
 var config = {
   listen: {
@@ -53,35 +51,11 @@ var client = restify.createJsonClient({
 Promise.promisifyAll(client, {multiArgs: true})
 
 test(
-  'block ip from ip blocklist',
+  'log only from blocklist',
   function (t) {
     client.postAsync('/check', {ip: BLOCK_IP, email: TEST_EMAIL, action: ACTION},
       function (err, req, res, obj) {
-        t.equal(obj.block, true, 'request is blocked')
-        t.end()
-      }
-    )
-  }
-)
-
-test(
-  'block ip in range of blocklist',
-  function (t) {
-    client.postAsync('/check', {ip: BLOCK_IP_INRANGE, email: TEST_EMAIL, action: ACTION},
-      function (err, req, res, obj) {
-        t.equal(obj.block, true, 'request is blocked')
-        t.end()
-      }
-    )
-  }
-)
-
-test(
-  'do not block ip not in range blocklist',
-  function (t) {
-    client.postAsync('/check', {ip: VALID_IP, email: TEST_EMAIL, action: ACTION},
-      function (err, req, res, obj) {
-        t.equal(obj.block, false, 'request is not blocked')
+        t.equal(obj.block, false, 'request is blocked')
         t.end()
       }
     )
