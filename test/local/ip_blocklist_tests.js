@@ -121,3 +121,37 @@ test(
       })
   }
 )
+
+test(
+  'clear blocklist',
+  function (t) {
+    var ipBlocklist = new IPBlocklist()
+
+    ipBlocklist.load(filePath)
+      .then(function () {
+        ipBlocklist.clear()
+        t.deepEqual(ipBlocklist.ipsByPrefixLength, {}, 'empty ipsByPrefixLength object')
+        t.equal(ipBlocklist.prefixLengths.length, 0, 'empty ip prefix')
+        t.end()
+      })
+  }
+)
+
+test(
+  'refresh blocklist',
+  function (t) {
+    var ipBlocklist = new IPBlocklist()
+
+    ipBlocklist.load(filePath)
+      .then(function () {
+        return ipBlocklist.refresh()
+      })
+      .then(function(){
+        t.end()
+      })
+      .catch(function(){
+        t.fail()
+        t.end()
+      })
+  }
+)
