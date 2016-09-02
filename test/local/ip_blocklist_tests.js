@@ -5,12 +5,13 @@ require('ass')
 
 var log = {
   info: function () {},
-  error: function () {}
+  error: function () {},
+  trace: function () {}
 }
 
 var test = require('tap').test
 var IPBlocklist = require('../../lib/ip_blocklist')(log)
-var filePath = '/../test/mocks/simple.netset'
+var filePath = './test/mocks/simple.netset'
 
 test(
   'calling contains without loading csv return false',
@@ -146,11 +147,11 @@ test(
       .then(function () {
         return ipBlocklist.refresh()
       })
-      .then(function(){
+      .then(function () {
         t.end()
       })
-      .catch(function(){
-        t.fail()
+      .catch(function (err) {
+        t.fail(err)
         t.end()
       })
   }
