@@ -20,8 +20,11 @@ var config = {
     maxBadLoginsPerIp: Number(process.env.MAX_BAD_LOGINS_PER_IP) || 3,
     ipRateLimitIntervalSeconds: Number(process.env.IP_RATE_LIMIT_INTERVAL_SECONDS) || 60 * 15,
     ipRateLimitBanDurationSeconds: Number(process.env.IP_RATE_LIMIT_BAN_DURATION_SECONDS) || 60 * 15,
-    badLoginLockout: 3,
-    badLoginLockoutIntervalSeconds: 20
+    uidRateLimit: {
+      limitIntervalSeconds: Number(process.env.UID_RATE_LIMIT_INTERVAL_SECONDS) || 60 * 15,
+      banDurationSeconds: Number(process.env.UID_RATE_LIMIT_BAN_DURATION_SECONDS) || 60 * 15,
+      maxChecks: Number(process.env.UID_RATE_LIMIT) || 3
+    }
   }
 }
 
@@ -83,23 +86,17 @@ function blockedIpCheck(cb) {
 
 module.exports.blockedIpCheck = blockedIpCheck
 
-function badLoginCheck(cb) {
-  setTimeout( // give memcache time to flush the writes
-    function () {
-      P.all([
-        mc.getAsync(TEST_IP + TEST_EMAIL),
-        mc.getAsync(TEST_EMAIL),
-        mc.getAsync(TEST_IP)
-      ])
-      .spread(function (d1, d2, d3) {
-        var ier = IpEmailRecord.parse(d1)
-        var er = EmailRecord.parse(d2)
-        var ir = IpRecord.parse(d3)
-        mc.end()
-        cb(ier.isOverBadLogins(), er.isWayOverBadLogins(), ir.isOverBadLogins())
-      })
-    }
-  )
+function badLoginCheck() {
+  return P.all([
+    mc.getAsync(TEST_IP + TEST_EMAIL),
+    mc.getAsync(TEST_IP)
+  ])
+  .spread(function (d1, d2) {
+    var ipEmailRecord = IpEmailRecord.parse(d1)
+    var ipRecord = IpRecord.parse(d2)
+    mc.end()
+    return {ipEmailRecord: ipEmailRecord, ipRecord: ipRecord}
+  })
 }
 
 module.exports.badLoginCheck = badLoginCheck
