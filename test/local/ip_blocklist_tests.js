@@ -24,8 +24,6 @@ var lists = [
   './test/mocks/simple.netset'
 ]
 
-var filePath = lists[0]
-
 var commonTestCases = [
   {
     name: 'IPBlocklist',
@@ -40,14 +38,14 @@ var commonTestCases = [
 ]
 
 commonTestCases.forEach(function (testCase) {
-  var IPBlocklist = testCase.blocklistClass
+  var BlocklistClass = testCase.blocklistClass
   var filePath = testCase.list
   var name = testCase.name
 
   test(
     name + ', calling contains without loading csv return false',
     function (t) {
-      var ipBlocklist = new IPBlocklist()
+      var ipBlocklist = new BlocklistClass()
       var result = ipBlocklist.contains('0.0.0.0')
       t.equal(result, false, 'should not have found ip')
       t.end()
@@ -58,7 +56,7 @@ commonTestCases.forEach(function (testCase) {
   test(
     name + ', load ip blocklist',
     function (t) {
-      var ipBlocklist = new IPBlocklist()
+      var ipBlocklist = new BlocklistClass()
 
       ipBlocklist.load(filePath)
         .then(function () {
@@ -74,7 +72,7 @@ commonTestCases.forEach(function (testCase) {
   test(
     name + ', returns true for empty ip',
     function (t) {
-      var ipBlocklist = new IPBlocklist()
+      var ipBlocklist = new BlocklistClass()
 
       ipBlocklist.load(filePath)
         .then(function () {
@@ -88,7 +86,7 @@ commonTestCases.forEach(function (testCase) {
   test(
     name + ', returns true for invalid ip',
     function (t) {
-      var ipBlocklist = new IPBlocklist()
+      var ipBlocklist = new BlocklistClass()
 
       ipBlocklist.load(filePath)
         .then(function () {
@@ -102,7 +100,7 @@ commonTestCases.forEach(function (testCase) {
   test(
     name + ', returns true for ip in blocklist',
     function (t) {
-      var ipBlocklist = new IPBlocklist()
+      var ipBlocklist = new BlocklistClass()
 
       ipBlocklist.load(filePath)
         .then(function () {
@@ -116,7 +114,7 @@ commonTestCases.forEach(function (testCase) {
   test(
     name + ', returns true for ip in blocklist range',
     function (t) {
-      var ipBlocklist = new IPBlocklist()
+      var ipBlocklist = new BlocklistClass()
 
       ipBlocklist.load(filePath)
         .then(function () {
@@ -130,7 +128,7 @@ commonTestCases.forEach(function (testCase) {
   test(
     name + ', returns false for ip not in blocklist',
     function (t) {
-      var ipBlocklist = new IPBlocklist()
+      var ipBlocklist = new BlocklistClass()
 
       ipBlocklist.load(filePath)
         .then(function () {
@@ -144,7 +142,7 @@ commonTestCases.forEach(function (testCase) {
   test(
     name + ', returns false for ip not in blocklist range',
     function (t) {
-      var ipBlocklist = new IPBlocklist()
+      var ipBlocklist = new BlocklistClass()
 
       ipBlocklist.load(filePath)
         .then(function () {
@@ -156,6 +154,8 @@ commonTestCases.forEach(function (testCase) {
   )
 })
 
+// Clear and Refresh test cases are not similar for IPBlocklist
+// and IPBlocklistManager
 test(
   'IPBlocklist, clear blocklist',
   function (t) {
@@ -176,7 +176,7 @@ test(
   function (t) {
     var ipBlocklist = new IPBlocklist()
 
-    ipBlocklist.load(filePath)
+    ipBlocklist.load(lists[0])
       .then(function () {
         return ipBlocklist.refresh()
       })
