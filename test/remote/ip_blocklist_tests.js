@@ -15,6 +15,14 @@ var VALID_IP = '3.0.0.0'
 
 process.env.IP_BLOCKLIST_ENABLE = true
 process.env.IP_BLOCKLIST_LOGONLY = false
+process.env.IP_BLOCKLIST_FILES = [
+  './../test/mocks/firehol_level1.netset',
+  './../test/mocks/firehol_level2.netset',
+  './../test/mocks/firehol_level3.netset',
+  './../test/mocks/firehol_level4.netset',
+  './../test/mocks/firehol_webserver.netset',
+  './../test/mocks/simple.netset'
+]
 
 var config = {
   listen: {
