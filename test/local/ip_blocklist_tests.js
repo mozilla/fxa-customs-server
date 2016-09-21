@@ -11,8 +11,10 @@ var log = {
 }
 
 var config = {
-  blocklist: {
-    updatePollInterval: 1 // 1 Second
+  ipBlocklist: {
+    updatePollInterval: 1, // 1 Second
+    batchSize: 10000, // 1 Second
+    batchDelayMs: 1 // 1 Second
   }
 }
 
