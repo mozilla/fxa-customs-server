@@ -2,19 +2,22 @@
  * http://creativecommons.org/publicdomain/zero/1.0/ */
 
 require('ass')
+var fs = require('fs')
+var Promise = require('bluebird')
 var test = require('tap').test
 
 var log = {
-  info: function () {},
-  error: function () {},
-  trace: function () {}
+  info: function () {
+  },
+  error: function () {
+  },
+  trace: function () {
+  }
 }
 
 var config = {
   ipBlocklist: {
-    updatePollInterval: 1, // 1 Second
-    batchSize: 10000, // 1 Second
-    batchDelayMs: 1 // 1 Second
+    updatePollInterval: 1 // 1 Second
   }
 }
 
@@ -72,28 +75,32 @@ commonTestCases.forEach(function (testCase) {
   )
 
   test(
-    name + ', returns true for empty ip',
+    name + ', throw for empty ip',
     function (t) {
       var ipBlocklist = new BlocklistClass()
 
       ipBlocklist.load(filePath)
         .then(function () {
-          var result = ipBlocklist.contains()
-          t.equal(result, true, 'return true for empty ip')
+
+          t.throws(function () {
+            ipBlocklist.contains()
+          })
           t.end()
         })
     }
   )
 
   test(
-    name + ', returns true for invalid ip',
+    name + ', throw for invalid ip',
     function (t) {
       var ipBlocklist = new BlocklistClass()
 
       ipBlocklist.load(filePath)
         .then(function () {
-          var result = ipBlocklist.contains('notip')
-          t.equal(result, true, 'return true for invalid ip')
+
+          t.throws(function () {
+            ipBlocklist.contains('notanip')
+          })
           t.end()
         })
     }
@@ -203,5 +210,70 @@ test(
         t.equal(ipBlocklist.ipBlocklists.length, 0, 'empty blocklist')
         t.end()
       })
+  }
+)
+
+test(
+  'IPBlocklistManager, reloads file correctly',
+  function (t) {
+    var tmpFilename = './test/mocks/temp.netset'
+    var tmpFileContents = '87.87.87.87'
+    var tmpFileContents2 = '87.87.87.86'
+
+    var ipBlocklist = new IPBlocklistManager()
+
+    // Delete old tmp to ensure starting from scratch
+    try {
+      fs.unlinkSync(tmpFilename)
+    } catch (err) {
+    }
+
+    fs.writeFileSync(tmpFilename, tmpFileContents, {})
+
+    ipBlocklist.load([tmpFilename])
+      .then(function () {
+
+        ipBlocklist.pollForUpdates()
+
+        var result = ipBlocklist.contains(tmpFileContents)
+        t.equal(result, true, 'should contain ip')
+
+        result = ipBlocklist.contains(tmpFileContents2)
+        t.equal(result, false, 'should not contain ip')
+
+        // Delay a little to ensure file timestamp changes
+        // from first file write
+        return Promise.delay(1000)
+      })
+      .then(function () {
+        fs.writeFileSync(tmpFilename, tmpFileContents2, {})
+
+        // Delay again to ensure that list gets reloaded
+        return Promise.delay(1100)
+      })
+      .then(function () {
+        var result = ipBlocklist.contains(tmpFileContents)
+        t.equal(result, false, 'should not contain ip')
+
+        result = ipBlocklist.contains(tmpFileContents2)
+        t.equal(result, true, 'should contain ip')
+
+        ipBlocklist.stopPolling()
+
+        // Write original file to ensure that stopPolling works
+        fs.writeFileSync(tmpFilename, tmpFileContents, {})
+
+        return Promise.delay(1000)
+      })
+      .then(function () {
+        var result = ipBlocklist.contains(tmpFileContents)
+        t.equal(result, false, 'should not contain ip')
+
+        result = ipBlocklist.contains(tmpFileContents2)
+        t.equal(result, true, 'should contain ip')
+
+        t.end()
+      })
+
   }
 )
