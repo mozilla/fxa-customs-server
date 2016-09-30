@@ -55,7 +55,7 @@ test(
   function (t) {
     client.postAsync('/check', {ip: BLOCK_IP, email: TEST_EMAIL, action: ACTION},
       function (err, req, res, obj) {
-        t.equal(obj.block, false, 'request is blocked')
+        t.equal(obj.block, false, 'request is not blocked')
         t.end()
       }
     )
