@@ -18,7 +18,7 @@ var TEST_CHECK_ACTION = 'recoveryEmailVerifyCode'
 
 // wait for the violation to be sent for endpoints that respond
 // before sending violation
-var TEST_DELAY_MS = 400
+var TEST_DELAY_MS = 500
 
 var config = {
   listen: {
