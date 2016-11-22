@@ -47,6 +47,7 @@ module.exports.mc = mc
 
 var TEST_EMAIL = 'test@example.com'
 var TEST_IP = '192.0.2.1'
+var TEST_UID = 'test-uid'
 
 var limits = require('../lib/limits')(config, mc, console)
 var allowedIPs = require('../lib/allowed_ips')(config, mc, console)
@@ -119,7 +120,8 @@ function clearEverything(cb) {
     mc.delAsync('requestChecks'),
     mc.delAsync(TEST_EMAIL),
     mc.delAsync(TEST_IP + TEST_EMAIL),
-    mc.delAsync(TEST_IP)
+    mc.delAsync(TEST_IP),
+    mc.delAsync(TEST_UID)
   ])
   .then(function () {
     mc.end()
