@@ -207,6 +207,7 @@ test(
     testServer.stop()
     t.equal(testServer.server.killed, true, 'test server killed')
     reputationServer.stop()
+    t.equal(reputationServer.server.killed, true, 'test reputation server killed')
     t.end()
   }
 )
