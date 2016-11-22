@@ -116,7 +116,7 @@ test(
       }).then(function () {
         return reputationClient.getAsync('/mostRecentViolation/' + TEST_IP)
       }).spread(function (req, res, obj) {
-        t.equal(res.body, '"fxa:request.check.block.recoveryEmailVerifyCode"', 'sends violation when /check')
+        t.equal(res.body, '"fxa:request.check.block.' + TEST_CHECK_ACTION + '"', 'sends violation when /check')
         return reputationClient.delAsync('/mostRecentViolation/' + TEST_IP)
       }).spread(function (req, res, obj) {
         t.equal(res.statusCode, 200, 'Failed to clear sent violation from test server.')
