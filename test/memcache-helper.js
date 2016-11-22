@@ -46,7 +46,9 @@ var mc = new Memcached(
 module.exports.mc = mc
 
 var TEST_EMAIL = 'test@example.com'
+var TEST_EMAIL_2 = 'test+2@example.com'
 var TEST_IP = '192.0.2.1'
+var ALLOWED_IP = '192.0.3.1'
 var TEST_UID = 'test-uid'
 
 var limits = require('../lib/limits')(config, mc, console)
@@ -119,8 +121,13 @@ function clearEverything(cb) {
     mc.delAsync('allowedEmailDomains'),
     mc.delAsync('requestChecks'),
     mc.delAsync(TEST_EMAIL),
-    mc.delAsync(TEST_IP + TEST_EMAIL),
+    mc.delAsync(TEST_EMAIL_2),
     mc.delAsync(TEST_IP),
+    mc.delAsync(ALLOWED_IP),
+    mc.delAsync(ALLOWED_IP + TEST_EMAIL),
+    mc.delAsync(ALLOWED_IP + TEST_EMAIL_2),
+    mc.delAsync(TEST_IP + TEST_EMAIL),
+    mc.delAsync(TEST_IP + TEST_EMAIL_2),
     mc.delAsync(TEST_UID)
   ])
   .then(function () {
