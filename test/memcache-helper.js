@@ -47,9 +47,14 @@ module.exports.mc = mc
 
 var TEST_EMAIL = 'test@example.com'
 var TEST_EMAIL_2 = 'test+2@example.com'
+var TEST_RESTMAIL = 'test@restmail.net'
 var TEST_IP = '192.0.2.1'
 var ALLOWED_IP = '192.0.3.1'
+var TEST_BAD_IP = '192.0.3.1'
 var TEST_UID = 'test-uid'
+var TEST_UID_2 = 'abc123'
+var TEST_BAD_IP_2 = '9.9.9.9'
+var TEST_CONFIG_UPDATE_IP = '10.0.0.5'
 
 var limits = require('../lib/limits')(config, mc, console)
 var allowedIPs = require('../lib/allowed_ips')(config, mc, console)
@@ -122,13 +127,21 @@ function clearEverything(cb) {
     mc.delAsync('requestChecks'),
     mc.delAsync(TEST_EMAIL),
     mc.delAsync(TEST_EMAIL_2),
+    mc.delAsync(TEST_RESTMAIL),
+    mc.delAsync(TEST_IP + TEST_RESTMAIL),
     mc.delAsync(TEST_IP),
     mc.delAsync(ALLOWED_IP),
     mc.delAsync(ALLOWED_IP + TEST_EMAIL),
     mc.delAsync(ALLOWED_IP + TEST_EMAIL_2),
     mc.delAsync(TEST_IP + TEST_EMAIL),
     mc.delAsync(TEST_IP + TEST_EMAIL_2),
-    mc.delAsync(TEST_UID)
+    mc.delAsync(TEST_UID),
+    mc.delAsync(TEST_UID_2),
+    mc.delAsync(TEST_BAD_IP),
+    mc.delAsync(TEST_BAD_IP + TEST_EMAIL),
+    mc.delAsync(TEST_BAD_IP_2),
+    mc.delAsync(TEST_BAD_IP_2 + TEST_EMAIL),
+    mc.delAsync(TEST_CONFIG_UPDATE_IP),
   ])
   .then(function () {
     mc.end()
