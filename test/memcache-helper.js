@@ -46,15 +46,7 @@ var mc = new Memcached(
 module.exports.mc = mc
 
 var TEST_EMAIL = 'test@example.com'
-var TEST_EMAIL_2 = 'test+2@example.com'
-var TEST_RESTMAIL = 'test@restmail.net'
 var TEST_IP = '192.0.2.1'
-var ALLOWED_IP = '192.0.3.1'
-var TEST_BAD_IP = '192.0.3.1'
-var TEST_UID = 'test-uid'
-var TEST_UID_2 = 'abc123'
-var TEST_BAD_IP_2 = '9.9.9.9'
-var TEST_CONFIG_UPDATE_IP = '10.0.0.5'
 
 var limits = require('../lib/limits')(config, mc, console)
 var allowedIPs = require('../lib/allowed_ips')(config, mc, console)
@@ -120,34 +112,36 @@ function badLoginCheck() {
 module.exports.badLoginCheck = badLoginCheck
 
 function clearEverything(cb) {
-  P.all([
-    mc.delAsync('limits'),
-    mc.delAsync('allowedIPs'),
-    mc.delAsync('allowedEmailDomains'),
-    mc.delAsync('requestChecks'),
-    mc.delAsync(TEST_EMAIL),
-    mc.delAsync(TEST_EMAIL_2),
-    mc.delAsync(TEST_RESTMAIL),
-    mc.delAsync(TEST_IP + TEST_RESTMAIL),
-    mc.delAsync(TEST_IP),
-    mc.delAsync(ALLOWED_IP),
-    mc.delAsync(ALLOWED_IP + TEST_EMAIL),
-    mc.delAsync(ALLOWED_IP + TEST_EMAIL_2),
-    mc.delAsync(TEST_IP + TEST_EMAIL),
-    mc.delAsync(TEST_IP + TEST_EMAIL_2),
-    mc.delAsync(TEST_UID),
-    mc.delAsync(TEST_UID_2),
-    mc.delAsync(TEST_BAD_IP),
-    mc.delAsync(TEST_BAD_IP + TEST_EMAIL),
-    mc.delAsync(TEST_BAD_IP_2),
-    mc.delAsync(TEST_BAD_IP_2 + TEST_EMAIL),
-    mc.delAsync(TEST_CONFIG_UPDATE_IP),
-  ])
-  .then(function () {
+  mc.itemsAsync().then(function (result) {
+    var firstServer = result[0]
+
+    // we don't need the "server" key, but the other indicate the slab id's
+    var keys = Object.keys(firstServer)
+      .filter(k => /[0-9]+/i.test(k))
+      .map(Number)
+
+    // get a cachedump for each slabid and slab.number
+    var cachedumps = keys.map(function(stats) {
+      return mc.cachedumpAsync(firstServer.server, stats, firstServer[stats].number)
+    }).map(function (dumpPromise) {
+      return dumpPromise.then(function (dump) {
+        // when one key is return as an object pretend it's an array
+        if (dump.key && !dump.length) {
+          dump = [dump]
+        }
+        return P.all(dump
+         .filter(item => /^fxa~/.test(item.key))
+         .map(function(item) {
+           return mc.delAsync(item.key.replace(/^fxa~/, ''))
+         }))
+      })
+    })
+
+    return P.all(cachedumps)
+  }).then(function () {
     mc.end()
     cb()
-  },
-  cb)
+  }).catch(cb)
 }
 
 module.exports.clearEverything = clearEverything
