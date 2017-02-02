@@ -22,7 +22,7 @@ var config = {
     ipRateLimitBanDurationSeconds: Number(process.env.IP_RATE_LIMIT_BAN_DURATION_SECONDS) || 60 * 15,
     smsRateLimit: {
       limitIntervalSeconds: Number(process.env.SMS_RATE_LIMIT_INTERVAL_SECONDS) || 60 * 15,
-      maxSMSs: Number(process.env.MAX_SMS) || 2
+      maxSms: Number(process.env.MAX_SMS) || 2
     },
     uidRateLimit: {
       limitIntervalSeconds: Number(process.env.UID_RATE_LIMIT_INTERVAL_SECONDS) || 60 * 15,

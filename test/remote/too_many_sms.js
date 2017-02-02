@@ -10,7 +10,7 @@ var TEST_IP = '192.0.2.1'
 var TEST_IP2 = '192.0.2.2'
 var TEST_IP3 = '192.0.2.3'
 var TEST_IP4 = '192.0.2.4'
-var INVITE_USER_SMS = 'inviteUserSMS'
+var INVITE_USER_SMS = 'inviteUserSms'
 var SMS_NUMBER = '14071234567'
 
 var config = {
@@ -59,7 +59,7 @@ test(
 )
 
 test(
-  '/check `inviteUserSMS` by number',
+  '/check `inviteUserSms` by number',
   function (t) {
 
     // Send requests until throttled
@@ -100,7 +100,7 @@ test(
 )
 
 test(
-  '/check `inviteUserSMS` by ip',
+  '/check `inviteUserSms` by ip',
   function (t) {
 
     // Send requests until throttled

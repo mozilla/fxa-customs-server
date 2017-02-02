@@ -10,7 +10,7 @@ function now() {
 }
 var limits = {
   smsRateLimitIntervalMs: 1000,
-  maxSMSs: 1
+  maxSms: 1
 }
 
 function simpleSMSRecord() {
@@ -33,7 +33,7 @@ test('rate limit works',
 test('retryAfter works',
   function (t) {
     var sr = simpleSMSRecord()
-    var action = 'inviteUserSMS'
+    var action = 'inviteUserSms'
 
     sr.update(action)
     t.equal(sr.isRateLimited(), false, 'record is not rate limited')
