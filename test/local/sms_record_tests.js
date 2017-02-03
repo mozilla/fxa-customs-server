@@ -33,7 +33,7 @@ test('rate limit works',
 test('retryAfter works',
   function (t) {
     var sr = simpleSMSRecord()
-    var action = 'inviteUserSms'
+    var action = 'connectDeviceSms'
 
     sr.update(action)
     t.equal(sr.isRateLimited(), false, 'record is not rate limited')
