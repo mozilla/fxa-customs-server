@@ -11,7 +11,7 @@ var TEST_IP2 = '192.0.2.2'
 var TEST_IP3 = '192.0.2.3'
 var TEST_IP4 = '192.0.2.4'
 var CONNECT_DEVICE_SMS = 'connectDeviceSms'
-var SMS_NUMBER = '14071234567'
+var PHONE_NUMBER = '14071234567'
 
 var config = {
   listen: {
@@ -63,16 +63,16 @@ test(
   function (t) {
 
     // Send requests until throttled
-    return client.postAsync('/check', { ip: TEST_IP, email: 'test1@example.com', smsNumber: SMS_NUMBER, action: CONNECT_DEVICE_SMS })
+    return client.postAsync('/check', { ip: TEST_IP, email: 'test1@example.com', payload: { phoneNumber: PHONE_NUMBER }, action: CONNECT_DEVICE_SMS })
       .spread(function(req, res, obj){
         t.equal(res.statusCode, 200, 'returns a 200')
         t.equal(obj.block, false, 'not rate limited')
-        return client.postAsync('/check', { ip: TEST_IP2, email: 'test2@example.com', smsNumber: SMS_NUMBER, action: CONNECT_DEVICE_SMS })
+        return client.postAsync('/check', { ip: TEST_IP2, email: 'test2@example.com', payload: { phoneNumber: PHONE_NUMBER }, action: CONNECT_DEVICE_SMS })
       })
       .spread(function(req, res, obj){
         t.equal(res.statusCode, 200, 'returns a 200')
         t.equal(obj.block, false, 'not rate limited')
-        return client.postAsync('/check', { ip: TEST_IP3, email: 'test3@example.com', smsNumber: SMS_NUMBER, action: CONNECT_DEVICE_SMS })
+        return client.postAsync('/check', { ip: TEST_IP3, email: 'test3@example.com', payload: { phoneNumber: PHONE_NUMBER }, action: CONNECT_DEVICE_SMS })
       })
       .spread(function(req, res, obj){
         t.equal(res.statusCode, 200, 'returns a 200')
@@ -85,7 +85,7 @@ test(
 
       // Reissue requests to verify that throttling is disabled
       .then(function(){
-        return client.postAsync('/check', { ip: TEST_IP, email: 'test4@example.com', smsNumber: SMS_NUMBER, action: CONNECT_DEVICE_SMS })
+        return client.postAsync('/check', { ip: TEST_IP, email: 'test4@example.com', payload: { phoneNumber: PHONE_NUMBER }, action: CONNECT_DEVICE_SMS })
       })
       .spread(function(req, res, obj){
         t.equal(res.statusCode, 200, 'returns a 200')
@@ -104,16 +104,16 @@ test(
   function (t) {
 
     // Send requests until throttled
-    return client.postAsync('/check', { ip: TEST_IP4, email: 'test5@example.com', smsNumber: '1111111111', action: CONNECT_DEVICE_SMS })
+    return client.postAsync('/check', { ip: TEST_IP4, email: 'test5@example.com', payload: { phoneNumber: '1111111111' }, action: CONNECT_DEVICE_SMS })
       .spread(function(req, res, obj){
         t.equal(res.statusCode, 200, 'returns a 200')
         t.equal(obj.block, false, 'not rate limited')
-        return client.postAsync('/check', { ip: TEST_IP4, email: 'test6@example.com', smsNumber: '2111111111', action: CONNECT_DEVICE_SMS })
+        return client.postAsync('/check', { ip: TEST_IP4, email: 'test6@example.com', payload: { phoneNumber: '2111111111' }, action: CONNECT_DEVICE_SMS })
       })
       .spread(function(req, res, obj){
         t.equal(res.statusCode, 200, 'returns a 200')
         t.equal(obj.block, false, 'not rate limited')
-        return client.postAsync('/check', { ip: TEST_IP4, email: 'test8@example.com', smsNumber: '3111111111', action: CONNECT_DEVICE_SMS })
+        return client.postAsync('/check', { ip: TEST_IP4, email: 'test8@example.com', payload: { phoneNumber: '3111111111' }, action: CONNECT_DEVICE_SMS })
       })
       .spread(function(req, res, obj){
         t.equal(res.statusCode, 200, 'returns a 200')
@@ -126,7 +126,7 @@ test(
 
       // Reissue requests to verify that throttling is disabled
       .then(function(){
-        return client.postAsync('/check', { ip: TEST_IP4, email: 'test9@example.com', smsNumber: '4111111111', action: CONNECT_DEVICE_SMS })
+        return client.postAsync('/check', { ip: TEST_IP4, email: 'test9@example.com', payload: { phoneNumber: '4111111111' }, action: CONNECT_DEVICE_SMS })
       })
       .spread(function(req, res, obj){
         t.equal(res.statusCode, 200, 'returns a 200')
