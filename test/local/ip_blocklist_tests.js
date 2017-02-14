@@ -223,8 +223,8 @@ test(
 
     ipBlocklist.load(lists)
       .then(function () {
-        ipBlocklist.clear()
-        t.equal(ipBlocklist.ipBlocklists.length, 0, 'empty blocklist')
+        var result = ipBlocklist.contains('86.75.30.9')
+        t.equal(result, false, 'return false for not found ip')
         t.end()
       })
   }
