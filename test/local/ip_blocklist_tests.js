@@ -17,7 +17,10 @@ var log = {
 
 var config = {
   ipBlocklist: {
-    updatePollInterval: 1 // 1 Second
+    updatePollInterval: 1, // 1 Second
+    logOnlyLists: [
+      './test/mocks/logOnlyList.netset'
+    ]
   }
 }
 
@@ -201,6 +204,20 @@ test(
 
 test(
   'IPBlocklistManager, clear blocklist',
+  function (t) {
+    var ipBlocklist = new IPBlocklistManager()
+
+    ipBlocklist.load(lists)
+      .then(function () {
+        ipBlocklist.clear()
+        t.equal(ipBlocklist.ipBlocklists.length, 0, 'empty blocklist')
+        t.end()
+      })
+  }
+)
+
+test(
+  'IPBlocklistManager, logOnly',
   function (t) {
     var ipBlocklist = new IPBlocklistManager()
 
