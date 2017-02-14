@@ -231,6 +231,23 @@ test(
 )
 
 test(
+  'IPBlocklistManager, load fails on non array',
+  function (t) {
+    var ipBlocklist = new IPBlocklistManager()
+
+    ipBlocklist.load('./somepath')
+      .then(function () {
+        t.fail('Failed to load csv')
+        t.end()
+      })
+      .catch(function (err) {
+        t.assert('lists must be an array', err.message)
+        t.end()
+      })
+  }
+)
+
+test(
   'IPBlocklistManager, reloads file correctly',
   function (t) {
     var tmpFilename = './test/mocks/temp.netset'
