@@ -108,11 +108,11 @@ test(
 )
 
 test(
-  'log only from hit on logOnly list and blocklist',
+  'block from hit on logOnly list and blocklist',
   function (t) {
     client.postAsync('/check', {ip: LOG_ONLY_BOTH_LIST_IP, email: TEST_EMAIL, action: ACTION},
       function (err, req, res, obj) {
-        t.equal(obj.block, false, 'request is not blocked')
+        t.equal(obj.block, true, 'request is not blocked')
         t.end()
       }
     )

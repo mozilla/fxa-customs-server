@@ -221,7 +221,7 @@ test(
   function (t) {
     var ipBlocklist = new IPBlocklistManager()
 
-    ipBlocklist.load(lists)
+    ipBlocklist.load(lists, config.ipBlocklist.logOnlyLists)
       .then(function () {
         var result = ipBlocklist.contains('86.75.30.9')
         t.equal(result, false, 'return false for not found ip')
