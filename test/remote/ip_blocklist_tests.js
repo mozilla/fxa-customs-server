@@ -96,7 +96,7 @@ test(
 )
 
 test(
-  'log only from blocklist',
+  'should log only on hit from logOnly list',
   function (t) {
     client.postAsync('/check', {ip: LOG_ONLY_IP, email: TEST_EMAIL, action: ACTION},
       function (err, req, res, obj) {
@@ -108,11 +108,11 @@ test(
 )
 
 test(
-  'block from hit on logOnly list and blocklist',
+  'should block request on hit form logOnly and blocklist',
   function (t) {
     client.postAsync('/check', {ip: LOG_ONLY_BOTH_LIST_IP, email: TEST_EMAIL, action: ACTION},
       function (err, req, res, obj) {
-        t.equal(obj.block, true, 'request is not blocked')
+        t.equal(obj.block, true, 'request is blocked')
         t.end()
       }
     )
