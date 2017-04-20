@@ -202,7 +202,7 @@ test(
         t.equal(res.statusCode, 200, 'returns a 200')
         t.equal(obj.block, false, 'rate limited')
 
-        // Verify that user is still block at the ip level from issuing any more sms requests
+        // Verify that user is still block at the email level from issuing any more sms requests
         return client.postAsync('/check', { ip: TEST_IP5, email: 'test1@example.com', payload: { phoneNumber: '1111111114' }, action: CONNECT_DEVICE_SMS })
       })
       .spread(function(req, res, obj){
