@@ -467,4 +467,31 @@
 * **docs:** Include a snipped about the memcached requirement. ([2446f1a](https://github.com/mozilla/fxa-customs-server/commit/2446f1a)), closes [#77](https://github.com/mozilla/fxa-customs-server/issues/77)
 
 
+# Older Versions
 
+0.6.0
+  * Add more logging when handling sqs ban events - #73
+
+0.5.0
+  * Block all actions for emails that are explicitly banned - #70
+
+0.4.0
+  * Validation errors should return 400 errors, not 500 - #68
+  * Document the current blocking and rate-limiting policies - #63
+
+0.3.0
+  * Add support for account lockout on excessive login attempts - #58, #60
+  * normalize email addresses (compare the lower case values) - #59, #62
+
+0.2.0
+  * update request and restify for new qs module
+  * update ass version
+  * use npm shrinkwrap
+
+0.1.1
+  * Remove redundant memcache.host and memcache.port settings
+  * expose all configuration settings to the environment; add option memcache.address to work with previous puppet settings
+  * removing npm spinner from travis logs
+
+0.1.0
+  * init
