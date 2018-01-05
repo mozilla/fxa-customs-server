@@ -8,7 +8,6 @@ var restify = Promise.promisifyAll(require('restify'))
 var mcHelper = require('../memcache-helper')
 
 var TEST_IP = '192.0.2.1'
-var VERIFY_CODE = 'recoveryEmailVerifyCode'
 
 var config = {
   listen: {
@@ -41,117 +40,125 @@ test(
   }
 )
 
-test(
-  'clear everything',
-  function (t) {
-    mcHelper.clearEverything(
-      function (err) {
-        t.notOk(err, 'no errors were returned')
-        t.end()
-      }
-    )
-  }
-)
+var testCasesVerifyCode = [
+  'recoveryEmailVerifyCode',
+  'passwordForgotVerifyCode',
+  'verifyTokenCode'
+]
 
-test(
-  '/check `recoveryEmailVerifyCode` by email',
-  function (t) {
+testCasesVerifyCode.forEach(function (action) {
+  test(
+    'clear everything',
+    function (t) {
+      mcHelper.clearEverything(
+        function (err) {
+          t.notOk(err, 'no errors were returned')
+          t.end()
+        }
+      )
+    }
+  )
 
-    // Send requests until throttled
-    return client.postAsync('/check', { ip: TEST_IP, email: 'test1@example.com', action: VERIFY_CODE })
-      .spread(function(req, res, obj){
-        t.equal(res.statusCode, 200, 'returns a 200')
-        t.equal(obj.block, false, 'not rate limited')
-        return client.postAsync('/check', { ip: TEST_IP, email: 'test1@example.com', action: VERIFY_CODE })
-      })
-      .spread(function(req, res, obj){
-        t.equal(res.statusCode, 200, 'returns a 200')
-        t.equal(obj.block, false, 'not rate limited')
-        return client.postAsync('/check', { ip: TEST_IP, email: 'test1@example.com', action: VERIFY_CODE })
-      })
-      .spread(function(req, res, obj){
-        t.equal(res.statusCode, 200, 'returns a 200')
-        t.equal(obj.block, true, 'rate limited')
-        t.equal(obj.retryAfter, 1, 'rate limit retry amount')
+  test(
+    '/check `' + action + '` by email',
+    function (t) {
 
-        // Delay ~1s for rate limit to go away
-        return Promise.delay(1010)
-      })
+      // Send requests until throttled
+      return client.postAsync('/check', { ip: TEST_IP, email: 'test1@example.com', action: action })
+        .spread(function(req, res, obj){
+          t.equal(res.statusCode, 200, 'returns a 200')
+          t.equal(obj.block, false, 'not rate limited')
+          return client.postAsync('/check', { ip: TEST_IP, email: 'test1@example.com', action: action })
+        })
+        .spread(function(req, res, obj){
+          t.equal(res.statusCode, 200, 'returns a 200')
+          t.equal(obj.block, false, 'not rate limited')
+          return client.postAsync('/check', { ip: TEST_IP, email: 'test1@example.com', action: action })
+        })
+        .spread(function(req, res, obj){
+          t.equal(res.statusCode, 200, 'returns a 200')
+          t.equal(obj.block, true, 'rate limited')
+          t.equal(obj.retryAfter, 1, 'rate limit retry amount')
 
-      // Reissue requests to verify that throttling is disabled
-      .then(function(){
-        return client.postAsync('/check', { ip: TEST_IP, email: 'test1@example.com', action: VERIFY_CODE })
-      })
-      .spread(function(req, res, obj){
-        t.equal(res.statusCode, 200, 'returns a 200')
-        t.equal(obj.block, false, 'not rate limited')
-        t.end()
-      })
-      .catch(function(err){
-        t.fail(err)
-        t.end()
-      })
-  }
-)
+          // Delay ~1s for rate limit to go away
+          return Promise.delay(1010)
+        })
 
-test(
-  'clear everything',
-  function (t) {
-    mcHelper.clearEverything(
-      function (err) {
-        t.notOk(err, 'no errors were returned')
-        t.end()
-      }
-    )
-  }
-)
+        // Reissue requests to verify that throttling is disabled
+        .then(function(){
+          return client.postAsync('/check', { ip: TEST_IP, email: 'test1@example.com', action: action })
+        })
+        .spread(function(req, res, obj){
+          t.equal(res.statusCode, 200, 'returns a 200')
+          t.equal(obj.block, false, 'not rate limited')
+          t.end()
+        })
+        .catch(function(err){
+          t.fail(err)
+          t.end()
+        })
+    }
+  )
 
-test(
-  '/check `recoveryEmailVerifyCode` by ip',
-  function (t) {
+  test(
+    'clear everything',
+    function (t) {
+      mcHelper.clearEverything(
+        function (err) {
+          t.notOk(err, 'no errors were returned')
+          t.end()
+        }
+      )
+    }
+  )
 
-    // Send requests until throttled
-    return client.postAsync('/check', { ip: TEST_IP, email: 'test2@example.com', action: VERIFY_CODE })
-      .spread(function(req, res, obj){
-        t.equal(res.statusCode, 200, 'returns a 200')
-        t.equal(obj.block, false, 'not rate limited')
-        return client.postAsync('/check', { ip: TEST_IP, email: 'test3@example.com', action: VERIFY_CODE })
-      })
-      .spread(function(req, res, obj){
-        t.equal(res.statusCode, 200, 'returns a 200')
-        t.equal(obj.block, false, 'not rate limited')
-        // Repeat email, not rate-limited yet.
-        return client.postAsync('/check', { ip: TEST_IP, email: 'test2@example.com', action: VERIFY_CODE })
-      })
-      .spread(function(req, res, obj){
-        t.equal(res.statusCode, 200, 'returns a 200')
-        t.equal(obj.block, false, 'not rate limited')
-        return client.postAsync('/check', { ip: TEST_IP, email: 'test4@example.com', action: VERIFY_CODE })
-      })
-      .spread(function(req, res, obj){
-        t.equal(res.statusCode, 200, 'returns a 200')
-        t.equal(obj.block, true, 'rate limited')
-        t.equal(obj.retryAfter, 1, 'rate limit retry amount')
+  test(
+    '/check `' + action + '` by ip',
+    function (t) {
 
-        // Delay ~1s for rate limit to go away
-        return Promise.delay(1010)
-      })
+      // Send requests until throttled
+      return client.postAsync('/check', { ip: TEST_IP, email: 'test2@example.com', action: action })
+        .spread(function(req, res, obj){
+          t.equal(res.statusCode, 200, 'returns a 200')
+          t.equal(obj.block, false, 'not rate limited')
+          return client.postAsync('/check', { ip: TEST_IP, email: 'test3@example.com', action: action })
+        })
+        .spread(function(req, res, obj){
+          t.equal(res.statusCode, 200, 'returns a 200')
+          t.equal(obj.block, false, 'not rate limited')
+          // Repeat email, not rate-limited yet.
+          return client.postAsync('/check', { ip: TEST_IP, email: 'test2@example.com', action: action })
+        })
+        .spread(function(req, res, obj){
+          t.equal(res.statusCode, 200, 'returns a 200')
+          t.equal(obj.block, false, 'not rate limited')
+          return client.postAsync('/check', { ip: TEST_IP, email: 'test4@example.com', action: action })
+        })
+        .spread(function(req, res, obj){
+          t.equal(res.statusCode, 200, 'returns a 200')
+          t.equal(obj.block, true, 'rate limited')
+          t.equal(obj.retryAfter, 1, 'rate limit retry amount')
 
-      // Reissue requests to verify that throttling is disabled
-      .then(function(){
-        return client.postAsync('/check', { ip: TEST_IP, email: 'test4@example.com', action: VERIFY_CODE })
-      })
-      .spread(function(req, res, obj){
-        t.equal(res.statusCode, 200, 'returns a 200')
-        t.equal(obj.block, false, 'not rate limited')
-        t.end()
-      })
-      .catch(function(err){
-        t.fail(err)
-        t.end()
-      })
-  }
-)
+          // Delay ~1s for rate limit to go away
+          return Promise.delay(1010)
+        })
+
+        // Reissue requests to verify that throttling is disabled
+        .then(function(){
+          return client.postAsync('/check', { ip: TEST_IP, email: 'test4@example.com', action: action })
+        })
+        .spread(function(req, res, obj){
+          t.equal(res.statusCode, 200, 'returns a 200')
+          t.equal(obj.block, false, 'not rate limited')
+          t.end()
+        })
+        .catch(function(err){
+          t.fail(err)
+          t.end()
+        })
+    }
+  )
+})
 
 test(
   'teardown',
