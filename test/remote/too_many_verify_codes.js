@@ -37,13 +37,13 @@ test('startup', (t) => {
   })
 })
 
-const testCasesVerifyCode = [
+const VERIFY_CODE_ACTIONS = [
   'recoveryEmailVerifyCode',
   'passwordForgotVerifyCode',
   'verifyTokenCode'
 ]
 
-testCasesVerifyCode.forEach((action) => {
+VERIFY_CODE_ACTIONS.forEach((action) => {
   test('clear everything', (t) => {
     mcHelper.clearEverything((err) => {
       t.notOk(err, 'no errors were returned')
