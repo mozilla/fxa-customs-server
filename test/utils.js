@@ -6,10 +6,6 @@
 const crypto = require('crypto')
 
 module.exports = {
-  getSubnet: function () {
-    return Math.floor(Math.random() * 255)
-  },
-
   randomEmail: function () {
     return Math.floor(Math.random() * 10000) + '@email.com'
   },
