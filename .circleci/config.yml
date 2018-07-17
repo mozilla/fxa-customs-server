@@ -40,8 +40,12 @@ jobs:
           command: docker build -f Dockerfile-test -t fxa-customs-server:test .
 
       - run:
+          name: Start memcached
+          command: docker pull memcached && docker run -d memcached
+
+      - run:
           name: Run Tests
-          command: docker run fxa-customs-server:test npm test
+          command: docker run run --net="host" fxa-customs-server:test npm test
 
       - run:
           name: Push to Dockerhub
