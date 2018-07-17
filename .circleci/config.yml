@@ -45,7 +45,7 @@ jobs:
 
       - run:
           name: Run Tests
-          command: docker run run --net="host" fxa-customs-server:test npm test
+          command: docker run --net="host" fxa-customs-server:test npm test
 
       - run:
           name: Push to Dockerhub
