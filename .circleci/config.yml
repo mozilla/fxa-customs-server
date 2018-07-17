@@ -40,8 +40,8 @@ jobs:
           command: docker build -f Dockerfile-test -t fxa-customs-server:test .
 
       - run:
-          name: Start memcached
-          command: docker pull memcached && docker run -d memcached
+          name: Install memcached
+          command: sudo apt-get install memcached
 
       - run:
           name: Run Tests
