@@ -1,3 +1,66 @@
+<a name="1.114.3"></a>
+## 1.114.3 (2018-06-21)
+
+
+### Features
+
+* **actions:** Add 'verifyRecoveryCode' as a code-checking action. ([fd4a1a3](https://github.com/mozilla/fxa-customs-server/commit/fd4a1a3))
+
+
+
+<a name="1.114.2"></a>
+## 1.114.2 (2018-06-13)
+
+
+### Bug Fixes
+
+* **docker:** base image node:8-alpine and upgrade to npm6 ([60a9013](https://github.com/mozilla/fxa-customs-server/commit/60a9013))
+
+
+
+<a name="1.114.1"></a>
+## 1.114.1 (2018-06-13)
+
+
+### Bug Fixes
+
+* **tests:** fix test-local.sh bug introduced in d177360 ([3590801](https://github.com/mozilla/fxa-customs-server/commit/3590801))
+
+
+
+<a name="1.114.0"></a>
+# 1.114.0 (2018-06-13)
+
+
+### Bug Fixes
+
+* **deps:** Update ip rep client to v3 (#247), r=@vbudhram ([c40684e](https://github.com/mozilla/fxa-customs-server/commit/c40684e))
+* **deps:** update ip rep client to v4 (#249) r=@vladikoff ([ab1fb6e](https://github.com/mozilla/fxa-customs-server/commit/ab1fb6e))
+* **tests:** remove bash builtin from test-local.sh (#250) r=@vladikoff ([d177360](https://github.com/mozilla/fxa-customs-server/commit/d177360))
+
+
+
+<a name="1.113.0"></a>
+# 1.113.0 (2018-05-30)
+
+
+### chore
+
+* **ci:** Remove coveralls from travis config (#246) ([3a988b6](https://github.com/mozilla/fxa-customs-server/commit/3a988b6))
+
+
+
+<a name="1.112.0"></a>
+# 1.112.0 (2018-05-16)
+
+
+### Bug Fixes
+
+* **npm:** update shrinkwrap (#241) ([aaa2afb](https://github.com/mozilla/fxa-customs-server/commit/aaa2afb))
+* **nsp:** Update newrelic version (#240) r=@vladikoff ([40580f1](https://github.com/mozilla/fxa-customs-server/commit/40580f1))
+
+
+
 <a name="1.111.0"></a>
 # 1.111.0 (2018-05-02)
 
