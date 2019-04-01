@@ -1,6 +1,9 @@
 Firefox Accounts Customs Server
 =======================
 
+**This project has moved to https://github.com/mozilla/fxa/tree/master/packages/fxa-customs-server**
+
+
 [![Build Status](https://travis-ci.org/mozilla/fxa-customs-server.svg?branch=master)](https://travis-ci.org/mozilla/fxa-customs-server)
 [![CircleCI](https://circleci.com/gh/mozilla/fxa-customs-server.svg?style=svg)](https://circleci.com/gh/mozilla/fxa-customs-server)
 
