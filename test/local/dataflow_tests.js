@@ -51,7 +51,7 @@ test(
       }
     }
 
-    dataflow(config, log)
+    dataflow(config, log, async () => {})
 
     t.equal(PubSub.PubSub.called, false)
   }
@@ -68,7 +68,7 @@ test(
       }
     }
 
-    t.throws(() => dataflow(config, log))
+    t.throws(() => dataflow(config, log, async () => {}))
   }
 )
 
@@ -83,7 +83,7 @@ test(
       }
     }
 
-    t.throws(() => dataflow(config, log))
+    t.throws(() => dataflow(config, log, async () => {}))
   }
 )
 
@@ -99,7 +99,7 @@ test(
       }
     }
 
-    dataflow(config, log)
+    dataflow(config, log, async () => {})
   }
 )
 
@@ -120,19 +120,21 @@ test('subscription messages are listened for', async (t) => {
 test('subscription messages are acked and logged', async (t) => {
   const messageHandler = subscription.on.args[0][1]
 
+  const message1Data = JSON.stringify({ metadata: [{ key: 'customs_category', value: 'bar' }]})
   const message1Mock = {
     ack: sinon.spy(),
     id: 'message1',
-    data: Buffer.from('wibble'),
+    data: Buffer.from(message1Data),
     attributes: {
       quix: 'quux'
     }
   }
 
+  const message2Data = JSON.stringify({ metadata: [{ key: 'customs_category', value: 'womble' }]})
   const message2Mock = {
     ack: sinon.spy(),
     id: 'message2',
-    data: Buffer.from('wobble'),
+    data: Buffer.from(message2Data),
     attributes: {
       garply: 'waldo'
     }
@@ -144,7 +146,7 @@ test('subscription messages are acked and logged', async (t) => {
     op: 'fxa.customs.dataflow.message',
     count: 0,
     id: 'message1',
-    data: 'wibble',
+    data: message1Data,
     attributes: {
       quix: 'quux'
     }
@@ -159,7 +161,7 @@ test('subscription messages are acked and logged', async (t) => {
     op: 'fxa.customs.dataflow.message',
     count: 1,
     id: 'message2',
-    data: 'wobble',
+    data: message2Data,
     attributes: {
       garply: 'waldo'
     }
